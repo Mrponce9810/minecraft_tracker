@@ -24,6 +24,7 @@
     }
 
     .category h2 {
+        align-content: center;
       margin: 1rem 0;
       border-bottom: 2px solid #333;
     }
@@ -60,26 +61,53 @@
       transform: scale(1.05);
     }
 
-    .dropdown h2 {
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.2s;
+ .dropdown-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem auto;
+  max-width: 900px;
 }
 
-.dropdown h2:hover {
-  color: #4caf50;
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.dropdown-button {
+  background-color: #2e2e2e;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.dropdown-button:hover {
+  background-color: #444;
 }
 
 .dropdown-content {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.4s ease;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background-color: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+  width: 100%;
+  margin-top: 1rem;
+  position: static; 
 }
 
 .dropdown-content.open {
-
-    max-width: 100px;
-    max-height: 1000px; /* lo suficiente para mostrar todo */
+  display: flex;
 }
   </style>
 </head>
@@ -87,38 +115,41 @@
 
   <h1>🗂️ Tracker de Objetos Raros - Minecraft</h1>
 
- <div class="dropdown">
-  <h2 class="dropdown-toggle" onclick="toggleDropdown('discos')">🎵 Discos Musicales ⌄</h2>
-  <div class="dropdown-content" id="discos"></div>
+<div class="dropdown-container">
+  <div class="dropdown">
+    <button class="dropdown-button">🎵 Discos Musicales</button>
+    <div class="dropdown-content" id="discos"></div>
+  </div>
+
+  <div class="dropdown">
+    <button class="dropdown-button">🏴 Banners Especiales</button>
+    <div class="dropdown-content" id="banners"></div>
+  </div>
+
+  <div class="dropdown">
+    <button class="dropdown-button">💎 Armor Trims Raros</button>
+    <div class="dropdown-content" id="trims"></div>
+  </div>
+
+  <div class="dropdown">
+    <button class="dropdown-button">📦 Otros Objetos Únicos</button>
+    <div class="dropdown-content" id="unicos"></div>
+  </div>
 </div>
 
-  <div class="category">
-    <h2>🏳️ Patrones de Banner</h2>
-    <div class="grid" id="banners"></div>
-  </div>
-
-  <div class="category">
-    <h2>⚔️ Armor Trims</h2>
-    <div class="grid" id="trims"></div>
-  </div>
-
-  <div class="category">
-    <h2>🧪 Ítems Únicos</h2>
-    <div class="grid" id="unicos"></div>
-  </div>
 
   <script>
     const data = {
       discos: [
         { id: '13', nombre: '13', img: 'https://minecraft.wiki/images/Music_Disc_13_JE1_BE1.png' },
         { id: 'cat', nombre: 'Cat', img: 'https://minecraft.wiki/images/Music_Disc_cat_JE1_BE1.png' },
-        {id: 'blocks', nombre: 'blocks', img: 'https://minecraft.wiki/images/Music_Disc_blocks_JE1_BE1.png?86de0'},
+        {id: 'blocks', nombre: 'blocks', img: 'https://minecraft.wiki/images/Music_Disc_blocks_JE1_BE1.png'},
         { id: 'pigstep', nombre: 'Pigstep', img: 'https://minecraft.wiki/images/Music_Disc_Pigstep_JE1_BE1.png' },
         { id: 'otherside', nombre: 'Otherside', img: 'https://minecraft.wiki/images/Music_Disc_otherside_JE1_BE1.png' }
       ],
       banners: [
-        { id: 'mojang', nombre: 'Mojang', img: 'https://minecraft.wiki/images/Mojang_banner_pattern_JE1_BE1.png' },
-        { id: 'skull', nombre: 'Skull', img: 'https://minecraft.wiki/images/Skull_banner_pattern_JE1_BE1.png' }
+        { id: 'mojang', nombre: 'Mojang', img: 'https://minecraft.wiki/images/Thing_Banner_Pattern_JE2_BE2.png?aef97' },
+        { id: 'skull', nombre: 'Skull', img: 'https://minecraft.wiki/images/Skull_Charge_Banner_Pattern_JE2_BE2.png?b92dd' }
       ],
       trims: [
         { id: 'ward', nombre: 'Ward Trim', img: 'https://minecraft.wiki/images/Ward_armor_trim_iron.png' },
@@ -130,47 +161,65 @@
         { id: 'dragon_egg', nombre: 'Huevo de Dragón', img: 'https://minecraft.wiki/images/Dragon_Egg_JE2_BE2.png' }
       ]
     };
+function loadItems() {
+  for (const [categoria, items] of Object.entries(data)) {
+    const container = document.getElementById(categoria);
+    const collected = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
 
-    const loadItems = () => {
-      for (const [categoria, items] of Object.entries(data)) {
-        const container = document.getElementById(categoria);
-        const collected = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.dataset.id = item.id;
 
-        items.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'item';
-          div.dataset.id = item.id;
-
-          if (collected.includes(item.id)) {
-            div.classList.add('collected');
-          }
-
-          div.innerHTML = `
-            <img src="${item.img}" alt="${item.nombre}">
-            <div>${item.nombre}</div>
-          `;
-
-          div.addEventListener('click', () => {
-            const current = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
-            if (current.includes(item.id)) {
-              localStorage.setItem('collected_' + categoria, JSON.stringify(current.filter(i => i !== item.id)));
-              div.classList.remove('collected');
-            } else {
-              current.push(item.id);
-              localStorage.setItem('collected_' + categoria, JSON.stringify(current));
-              div.classList.add('collected');
-            }
-          });
-
-          container.appendChild(div);
-        });
+      if (collected.includes(item.id)) {
+        div.classList.add('collected');
       }
-    };
 
-    function toggleDropdown(id) {
-  const content = document.getElementById(id);
-  content.classList.toggle('open');
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.nombre}">
+        <div>${item.nombre}</div>
+      `;
+
+      div.addEventListener('click', () => {
+        const current = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
+        if (current.includes(item.id)) {
+          localStorage.setItem('collected_' + categoria, JSON.stringify(current.filter(i => i !== item.id)));
+          div.classList.remove('collected');
+        } else {
+          current.push(item.id);
+          localStorage.setItem('collected_' + categoria, JSON.stringify(current));
+          div.classList.add('collected');
+        }
+      });
+
+      container.appendChild(div);
+    });
+  }
 }
+   document.querySelectorAll('.dropdown-button').forEach(button => {
+  button.addEventListener('click', function () {
+    const currentDropdown = this.nextElementSibling;
+
+    
+    document.querySelectorAll('.dropdown-content').forEach(menu => {
+      if (menu !== currentDropdown) {
+        menu.classList.remove('open');
+      }
+    });
+
+    
+    currentDropdown.classList.toggle('open');
+  });
+});
+
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.dropdown')) {
+    document.querySelectorAll('.dropdown-content').forEach(menu => {
+      menu.classList.remove('open');
+    });
+  }
+});
+
     loadItems();
   </script>
 </body>
