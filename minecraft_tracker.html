@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tracker de Objetos Raros - Minecraft</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 2rem 0 1rem;
+    }
+
+    .category {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    .category h2 {
+      margin: 1rem 0;
+      border-bottom: 2px solid #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .item {
+      background-color: #1a1a1a;
+      border: 2px solid #333;
+      padding: 0.5rem;
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 0.2s, opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .item img {
+      max-width: 64px;
+      height: auto;
+      display: block;
+      margin: auto;
+    }
+
+    .item.collected {
+      opacity: 0.5;
+      border-color: #4caf50;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
+    }
+
+    .dropdown h2 {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.dropdown h2:hover {
+  color: #4caf50;
+}
+
+.dropdown-content {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease;
+}
+
+.dropdown-content.open {
+
+    max-width: 100px;
+    max-height: 1000px; /* lo suficiente para mostrar todo */
+}
+  </style>
+</head>
+<body>
+
+  <h1>🗂️ Tracker de Objetos Raros - Minecraft</h1>
+
+ <div class="dropdown">
+  <h2 class="dropdown-toggle" onclick="toggleDropdown('discos')">🎵 Discos Musicales ⌄</h2>
+  <div class="dropdown-content" id="discos"></div>
+</div>
+
+  <div class="category">
+    <h2>🏳️ Patrones de Banner</h2>
+    <div class="grid" id="banners"></div>
+  </div>
+
+  <div class="category">
+    <h2>⚔️ Armor Trims</h2>
+    <div class="grid" id="trims"></div>
+  </div>
+
+  <div class="category">
+    <h2>🧪 Ítems Únicos</h2>
+    <div class="grid" id="unicos"></div>
+  </div>
+
+  <script>
+    const data = {
+      discos: [
+        { id: '13', nombre: '13', img: 'https://minecraft.wiki/images/Music_Disc_13_JE1_BE1.png' },
+        { id: 'cat', nombre: 'Cat', img: 'https://minecraft.wiki/images/Music_Disc_cat_JE1_BE1.png' },
+        {id: 'blocks', nombre: 'blocks', img: 'https://minecraft.wiki/images/Music_Disc_blocks_JE1_BE1.png?86de0'},
+        { id: 'pigstep', nombre: 'Pigstep', img: 'https://minecraft.wiki/images/Music_Disc_Pigstep_JE1_BE1.png' },
+        { id: 'otherside', nombre: 'Otherside', img: 'https://minecraft.wiki/images/Music_Disc_otherside_JE1_BE1.png' }
+      ],
+      banners: [
+        { id: 'mojang', nombre: 'Mojang', img: 'https://minecraft.wiki/images/Mojang_banner_pattern_JE1_BE1.png' },
+        { id: 'skull', nombre: 'Skull', img: 'https://minecraft.wiki/images/Skull_banner_pattern_JE1_BE1.png' }
+      ],
+      trims: [
+        { id: 'ward', nombre: 'Ward Trim', img: 'https://minecraft.wiki/images/Ward_armor_trim_iron.png' },
+        { id: 'spire', nombre: 'Spire Trim', img: 'https://minecraft.wiki/images/Spire_armor_trim_iron.png' }
+      ],
+      unicos: [
+        { id: 'totem', nombre: 'Totem de la Inmortalidad', img: 'https://minecraft.wiki/images/Totem_of_Undying_JE2_BE2.png' },
+        { id: 'elytra', nombre: 'Elytra', img: 'https://minecraft.wiki/images/Elytra_JE2_BE2.png' },
+        { id: 'dragon_egg', nombre: 'Huevo de Dragón', img: 'https://minecraft.wiki/images/Dragon_Egg_JE2_BE2.png' }
+      ]
+    };
+
+    const loadItems = () => {
+      for (const [categoria, items] of Object.entries(data)) {
+        const container = document.getElementById(categoria);
+        const collected = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
+
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'item';
+          div.dataset.id = item.id;
+
+          if (collected.includes(item.id)) {
+            div.classList.add('collected');
+          }
+
+          div.innerHTML = `
+            <img src="${item.img}" alt="${item.nombre}">
+            <div>${item.nombre}</div>
+          `;
+
+          div.addEventListener('click', () => {
+            const current = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
+            if (current.includes(item.id)) {
+              localStorage.setItem('collected_' + categoria, JSON.stringify(current.filter(i => i !== item.id)));
+              div.classList.remove('collected');
+            } else {
+              current.push(item.id);
+              localStorage.setItem('collected_' + categoria, JSON.stringify(current));
+              div.classList.add('collected');
+            }
+          });
+
+          container.appendChild(div);
+        });
+      }
+    };
+
+    function toggleDropdown(id) {
+  const content = document.getElementById(id);
+  content.classList.toggle('open');
+}
+    loadItems();
+  </script>
+</body>
+</html>
