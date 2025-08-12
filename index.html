@@ -46,13 +46,17 @@
             padding-bottom: 15px;
             color: var(--highlight-color);
         }
-
-        .menu-link, .menu-button {
-            display: block;
+        
+        /* --- ESTILOS DE BOTONES DEL MENÚ CON ÍCONOS --- */
+        .menu-link, .menu-button, .submenu-link {
+            display: flex; /* Para alinear ícono y texto */
+            align-items: center; /* Centra verticalmente */
+            gap: 12px; /* Espacio entre el ícono y el texto */
+            
             background-color: #2a2a2a;
             color: var(--text-color);
             border: none;
-            padding: 12px 15px;
+            padding: 10px 15px;
             width: 100%;
             text-align: left;
             font-size: 16px;
@@ -61,15 +65,20 @@
             margin-top: 10px;
             border-radius: 5px;
             text-decoration: none;
-            box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+            box-sizing: border-box;
         }
-
-        .menu-link:hover, .menu-button:hover {
+        
+        .menu-link:hover, .menu-button:hover, .submenu-link:hover {
             background-color: var(--highlight-color);
             color: white;
         }
         
-        /* Estilos para el submenú */
+        /* Ajuste del tamaño de los íconos del menú */
+        .menu-link img, .menu-button img, .submenu-link img {
+            width: 24px;
+            height: 24px;
+        }
+        
         .submenu {
             list-style: none;
             padding-left: 15px;
@@ -79,19 +88,12 @@
         }
 
         .has-submenu.active .submenu {
-            max-height: 500px; /* Suficiente para mostrar los items */
+            max-height: 500px;
         }
-
+        
         .submenu-link {
-            display: block;
-            padding: 10px 15px;
-            color: #ccc;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 5px;
-        }
-        .submenu-link:hover {
-            background-color: #3f3f3f;
+            font-size: 15px;
+            background-color: #1c1c1c;
         }
 
 
@@ -142,10 +144,9 @@
             width: 20px;
             height: 20px;
             cursor: pointer;
-            accent-color: var(--highlight-color); /* Colorea el checkbox */
+            accent-color: var(--highlight-color);
         }
 
-        /* Estilo para la fila marcada como conseguida */
         .data-table tr.collected {
             opacity: 0.6;
             background-color: #222;
@@ -160,25 +161,65 @@
     <div class="page-container">
         <aside class="sidebar">
             <h2>Minecraft Tracker</h2>
-            <a href="#" class="menu-link" data-category="blocks">🧱 Blocks</a>
-            <a href="#" class="menu-link" data-category="mobs">🧟 Mobs</a>
-            <a href="#" class="menu-link" data-category="structures">🏛️ Structures</a>
+
+            <a href="#" class="menu-link" data-category="blocks">
+                <img src="https://minecraft.wiki/images/Blocks_preview.png?b6099" alt="Blocks">
+                <span>Blocks</span>
+            </a>
+            <a href="#" class="menu-link" data-category="mobs">
+                <img src="https://minecraft.wiki/images/Minecraft_mobs_preview.png?a9663" alt="Mobs">
+                <span>Mobs</span>
+            </a>
+            <a href="#" class="menu-link" data-category="structures">
+                <img src="https://minecraft.wiki/images/Buildplate_Icon_MCE.png?8e172" alt="Structures">
+                <span>Structures</span>
+            </a>
 
             <div class="menu-section has-submenu">
-                <button class="menu-button">🧰 Objects</button>
+                <button class="menu-button">
+                    <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/41/Chest.gif/revision/latest?cb=20191219163201" alt="Objects">
+                    <span>Objects</span>
+                </button>
                 <ul class="submenu">
-                    <li><a href="#" class="submenu-link" data-category="comida">🍔 Comida</a></li>
-                    <li><a href="#" class="submenu-link" data-category="herramienta">⛏️ Herramienta</a></li>
-                    <li><a href="#" class="submenu-link" data-category="material">🪵 Material</a></li>
-                    <li><a href="#" class="submenu-link" data-category="arma">⚔️ Arma</a></li>
-                    <li><a href="#" class="submenu-link" data-category="armadura">🛡️ Armadura</a></li>
+                    <li><a href="#" class="submenu-link" data-category="comida">
+                        <img src="https://minecraft.wiki/images/Steak_JE4_BE2.png" alt="Comida">
+                        <span>Comida</span>
+                    </a></li>
+                    <li><a href="#" class="submenu-link" data-category="herramienta">
+                        <img src="https://minecraft.wiki/images/Diamond_Pickaxe_JE3_BE3.png" alt="Herramienta">
+                        <span>Herramienta</span>
+                    </a></li>
+                    <li><a href="#" class="submenu-link" data-category="material">
+                        <img src="https://minecraft.wiki/images/Oak_Log_JE4_BE3.png" alt="Material">
+                        <span>Material</span>
+                    </a></li>
+                    <li><a href="#" class="submenu-link" data-category="arma">
+                        <img src="https://minecraft.wiki/images/Diamond_Sword_JE3_BE3.png" alt="Arma">
+                        <span>Arma</span>
+                    </a></li>
+                    <li><a href="#" class="submenu-link" data-category="armadura">
+                        <img src="https://minecraft.wiki/images/Diamond_Chestplate_JE3_BE3.png" alt="Armadura">
+                        <span>Armadura</span>
+                    </a></li>
                 </ul>
             </div>
 
-            <a href="#" class="menu-link" data-category="enchantments">✨ Enchantments</a>
-            <a href="#" class="menu-link" data-category="effects">🧪 Effects</a>
-            <a href="#" class="menu-link" data-category="achievements">🏆 Achievements</a>
-            <a href="#" class="menu-link" data-category="unique_objects">💎 Unique Objects</a>
+            <a href="#" class="menu-link" data-category="enchantments">
+                <img src="https://minecraft.wiki/images/Enchanting_Table_JE4_BE3.png" alt="Enchantments">
+                <span>Enchantments</span>
+            </a>
+            <a href="#" class="menu-link" data-category="effects">
+                <img src="https://minecraft.wiki/images/Potion_of_Healing_JE2_BE2.png" alt="Effects">
+                <span>Effects</span>
+            </a>
+            <a href="#" class="menu-link" data-category="achievements">
+                <img src="https://minecraft.wiki/images/Experience_Orb_JE2_BE2.gif" alt="Achievements">
+                <span>Achievements</span>
+            </a>
+            <a href="#" class="menu-link" data-category="unique_objects">
+                <img src="https://minecraft.wiki/images/Dragon_Egg_JE2_BE2.png" alt="Unique Objects">
+                <span>Unique Objects</span>
+            </a>
         </aside>
 
         <main class="main-content">
@@ -196,7 +237,6 @@
 
     <script>
         // --- BASE DE DATOS DE EJEMPLO ---
-        // Aquí puedes agregar todos los items que necesites para cada categoría.
         const data = {
             blocks: [
                 { id: 'diamond_block', name: 'Bloque de Diamante', img: 'https://minecraft.wiki/images/Diamond_Block_JE4_BE3.png', description: 'Un bloque decorativo y de almacenamiento hecho de 9 diamantes.' },
@@ -222,38 +262,58 @@
                 { id: 'dragon_egg', name: 'Huevo de Dragón', img: 'https://minecraft.wiki/images/Dragon_Egg_JE2_BE2.png', description: 'Un trofeo único que se obtiene al derrotar al Dragón del End por primera vez.' },
                 { id: 'elytra', name: 'Élitros', img: 'https://minecraft.wiki/images/Elytra_JE2_BE2.png', description: 'Un objeto raro que permite al jugador planear. Se encuentra en los barcos de las End Cities.' }
             ]
-            // ... Puedes añadir más categorías y objetos aquí (structures, enchantments, etc.)
         };
 
-        // --- LÓGICA DE LA APLICACIÓN ---
+        // --- (JAVASCRIPT MODIFICADO) LÓGICA DE LA APLICACIÓN ---
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.querySelector('.sidebar');
             const contentDisplay = document.getElementById('content-display');
+            // Referencias a los elementos del título principal
+            const mainTitleImage = document.querySelector('.title img');
+            const mainTitleSpan = document.querySelector('.title span');
 
             sidebar.addEventListener('click', function(e) {
-                const target = e.target;
+                const target = e.target.closest('a, button');
+                if (!target) return;
 
-                // Manejar clic en un enlace de categoría (simple o submenú)
+                // Si se hace clic en un enlace de categoría
                 if (target.matches('.menu-link') || target.matches('.submenu-link')) {
                     e.preventDefault();
+
+                    // --- NUEVA LÓGICA PARA ACTUALIZAR EL TÍTULO ---
+                    const iconSrc = target.querySelector('img').src;
+                    const text = target.querySelector('span').textContent;
+                    updateMainTitle(iconSrc, text);
+                    // --- FIN DE LA NUEVA LÓGICA ---
+
                     const categoryKey = target.dataset.category;
                     renderTable(categoryKey);
                 }
 
-                // Manejar clic en un botón con submenú
+                // Si se hace clic en un botón con submenú
                 if (target.matches('.menu-button')) {
-                    const parentSection = target.parentElement;
-                    parentSection.classList.toggle('active');
+                    target.parentElement.classList.toggle('active');
                 }
             });
 
             /**
-             * Renderiza una tabla en el área de contenido principal para una categoría dada.
-             * @param {string} categoryKey - La clave de la categoría en el objeto 'data'.
+             * (NUEVA FUNCIÓN) Actualiza el título principal de la página.
+             * @param {string} iconSrc - La URL de la nueva imagen del ícono.
+             * @param {string} text - El nuevo texto para el título.
+             */
+            function updateMainTitle(iconSrc, text) {
+                mainTitleImage.src = iconSrc;
+                mainTitleImage.alt = text; // Actualiza el texto alternativo por accesibilidad
+                mainTitleSpan.textContent = text;
+            }
+
+            /**
+             * Renderiza una tabla en el área de contenido principal.
+             * (Sin cambios en esta función)
              */
             function renderTable(categoryKey) {
                 const items = data[categoryKey];
-                contentDisplay.innerHTML = ''; // Limpiar contenido anterior
+                contentDisplay.innerHTML = ''; 
 
                 if (!items || items.length === 0) {
                     contentDisplay.innerHTML = `<p>No hay items en la categoría "${categoryKey}".</p>`;
@@ -273,8 +333,7 @@
                             <th>Conseguido</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
                 `;
 
                 const tbody = table.querySelector('tbody');
@@ -295,7 +354,6 @@
                         <td><input type="checkbox" data-id="${item.id}" ${isCollected ? 'checked' : ''}></td>
                     `;
                     
-                    // Añadir evento al checkbox
                     const checkbox = row.querySelector('input[type="checkbox"]');
                     checkbox.addEventListener('change', function() {
                         handleCollectionToggle(categoryKey, item.id, row);
@@ -306,12 +364,10 @@
 
                 contentDisplay.appendChild(table);
             }
-
+            
             /**
-             * Maneja el estado de un item (conseguido/no conseguido) y actualiza localStorage.
-             * @param {string} categoryKey - La categoría del item.
-             * @param {string} itemId - El ID del item.
-             * @param {HTMLElement} rowElement - La fila (tr) de la tabla correspondiente.
+             * Maneja el estado de un item y actualiza localStorage.
+             * (Sin cambios en esta función)
              */
             function handleCollectionToggle(categoryKey, itemId, rowElement) {
                  const storageKey = 'collected_' + categoryKey;
@@ -320,11 +376,9 @@
                  const itemIndex = collectedItems.indexOf(itemId);
 
                  if (itemIndex > -1) {
-                    // Si ya estaba, quitarlo
                     collectedItems.splice(itemIndex, 1);
                     rowElement.classList.remove('collected');
                  } else {
-                    // Si no estaba, añadirlo
                     collectedItems.push(itemId);
                     rowElement.classList.add('collected');
                  }
