@@ -1,227 +1,338 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Tracker de Objetos Raros - Minecraft</title>
-  <style>
-    body {
-      background-color: #0d0d0d;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      text-align: center;
-      margin: 2rem 0 1rem;
-    }
-
-    .category {
-      max-width: 1200px;
-      margin: auto;
-      padding: 1rem;
-    }
-
-    .category h2 {
-        align-content: center;
-      margin: 1rem 0;
-      border-bottom: 2px solid #333;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 1rem;
-    }
-
-    .item {
-      background-color: #1a1a1a;
-      border: 2px solid #333;
-      padding: 0.5rem;
-      border-radius: 8px;
-      text-align: center;
-      transition: transform 0.2s, opacity 0.2s;
-      cursor: pointer;
-    }
-
-    .item img {
-      max-width: 64px;
-      height: auto;
-      display: block;
-      margin: auto;
-    }
-
-    .item.collected {
-      opacity: 0.5;
-      border-color: #4caf50;
-    }
-
-    .item:hover {
-      transform: scale(1.05);
-    }
-
- .dropdown-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: center;
-  gap: 2rem;
-  margin: 2rem auto;
-  max-width: 900px;
-}
-
-.dropdown {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.dropdown-button {
-  background-color: #2e2e2e;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-}
-
-.dropdown-button:hover {
-  background-color: #444;
-}
-
-.dropdown-content {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  background-color: #1a1a1a;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
-  width: 100%;
-  margin-top: 1rem;
-  position: static; 
-}
-
-.dropdown-content.open {
-  display: flex;
-}
-  </style>
-</head>
-<body>
-
-  <h1>🗂️ Tracker de Objetos Raros - Minecraft</h1>
-
-<div class="dropdown-container">
-  <div class="dropdown">
-    <button class="dropdown-button">🎵 Discos Musicales</button>
-    <div class="dropdown-content" id="discos"></div>
-  </div>
-
-  <div class="dropdown">
-    <button class="dropdown-button">🏴 Banners Especiales</button>
-    <div class="dropdown-content" id="banners"></div>
-  </div>
-
-  <div class="dropdown">
-    <button class="dropdown-button">💎 Armor Trims Raros</button>
-    <div class="dropdown-content" id="trims"></div>
-  </div>
-
-  <div class="dropdown">
-    <button class="dropdown-button">📦 Otros Objetos Únicos</button>
-    <div class="dropdown-content" id="unicos"></div>
-  </div>
-</div>
-
-
-  <script>
-    const data = {
-      discos: [
-        { id: '13', nombre: '13', img: 'https://minecraft.wiki/images/Music_Disc_13_JE1_BE1.png' },
-        { id: 'cat', nombre: 'Cat', img: 'https://minecraft.wiki/images/Music_Disc_cat_JE1_BE1.png' },
-        {id: 'blocks', nombre: 'blocks', img: 'https://minecraft.wiki/images/Music_Disc_blocks_JE1_BE1.png'},
-        { id: 'pigstep', nombre: 'Pigstep', img: 'https://minecraft.wiki/images/Music_Disc_Pigstep_JE1_BE1.png' },
-        { id: 'otherside', nombre: 'Otherside', img: 'https://minecraft.wiki/images/Music_Disc_otherside_JE1_BE1.png' }
-      ],
-      banners: [
-        { id: 'mojang', nombre: 'Mojang', img: 'https://minecraft.wiki/images/Thing_Banner_Pattern_JE2_BE2.png?aef97' },
-        { id: 'skull', nombre: 'Skull', img: 'https://minecraft.wiki/images/Skull_Charge_Banner_Pattern_JE2_BE2.png?b92dd' }
-      ],
-      trims: [
-        { id: 'ward', nombre: 'Ward Trim', img: 'https://minecraft.wiki/images/Ward_armor_trim_iron.png' },
-        { id: 'spire', nombre: 'Spire Trim', img: 'https://minecraft.wiki/images/Spire_armor_trim_iron.png' }
-      ],
-      unicos: [
-        { id: 'totem', nombre: 'Totem de la Inmortalidad', img: 'https://minecraft.wiki/images/Totem_of_Undying_JE2_BE2.png' },
-        { id: 'elytra', nombre: 'Elytra', img: 'https://minecraft.wiki/images/Elytra_JE2_BE2.png' },
-        { id: 'dragon_egg', nombre: 'Huevo de Dragón', img: 'https://minecraft.wiki/images/Dragon_Egg_JE2_BE2.png' }
-      ]
-    };
-function loadItems() {
-  for (const [categoria, items] of Object.entries(data)) {
-    const container = document.getElementById(categoria);
-    const collected = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
-
-    items.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.dataset.id = item.id;
-
-      if (collected.includes(item.id)) {
-        div.classList.add('collected');
-      }
-
-      div.innerHTML = `
-        <img src="${item.img}" alt="${item.nombre}">
-        <div>${item.nombre}</div>
-      `;
-
-      div.addEventListener('click', () => {
-        const current = JSON.parse(localStorage.getItem('collected_' + categoria) || '[]');
-        if (current.includes(item.id)) {
-          localStorage.setItem('collected_' + categoria, JSON.stringify(current.filter(i => i !== item.id)));
-          div.classList.remove('collected');
-        } else {
-          current.push(item.id);
-          localStorage.setItem('collected_' + categoria, JSON.stringify(current));
-          div.classList.add('collected');
+    <meta charset="UTF-8">
+    <title>Minecraft Tracker</title>
+    <style>
+        /* --- ESTILOS GENERALES Y DE LAYOUT --- */
+        :root {
+            --background-color: #1e1e1e;
+            --sidebar-bg: #111111;
+            --main-content-bg: #181818;
+            --text-color: #e0e0e0;
+            --highlight-color: #5e8c61;
+            --border-color: #333;
         }
-      });
 
-      container.appendChild(div);
-    });
-  }
-}
-   document.querySelectorAll('.dropdown-button').forEach(button => {
-  button.addEventListener('click', function () {
-    const currentDropdown = this.nextElementSibling;
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
 
-    
-    document.querySelectorAll('.dropdown-content').forEach(menu => {
-      if (menu !== currentDropdown) {
-        menu.classList.remove('open');
-      }
-    });
+        .page-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+        }
 
-    
-    currentDropdown.classList.toggle('open');
-  });
-});
+        /* --- ESTILOS DEL SIDEBAR --- */
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            height: 100vh;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            border-right: 2px solid var(--border-color);
+        }
 
-document.addEventListener('click', function (e) {
-  if (!e.target.closest('.dropdown')) {
-    document.querySelectorAll('.dropdown-content').forEach(menu => {
-      menu.classList.remove('open');
-    });
-  }
-});
+        .sidebar h2 {
+            text-align: center;
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            color: var(--highlight-color);
+        }
 
-    loadItems();
-  </script>
+        .menu-link, .menu-button {
+            display: block;
+            background-color: #2a2a2a;
+            color: var(--text-color);
+            border: none;
+            padding: 12px 15px;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+        }
+
+        .menu-link:hover, .menu-button:hover {
+            background-color: var(--highlight-color);
+            color: white;
+        }
+        
+        /* Estilos para el submenú */
+        .submenu {
+            list-style: none;
+            padding-left: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+
+        .has-submenu.active .submenu {
+            max-height: 500px; /* Suficiente para mostrar los items */
+        }
+
+        .submenu-link {
+            display: block;
+            padding: 10px 15px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .submenu-link:hover {
+            background-color: #3f3f3f;
+        }
+
+
+        /* --- ESTILOS DEL CONTENIDO PRINCIPAL --- */
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+            background-color: var(--main-content-bg);
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+            color: var(--highlight-color);
+            margin-bottom: 2rem;
+        }
+        
+        #content-display p {
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        /* --- ESTILOS DE LA TABLA --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #2a2a2a;
+        }
+
+        .data-table img {
+            max-width: 48px;
+            vertical-align: middle;
+        }
+
+        .data-table input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--highlight-color); /* Colorea el checkbox */
+        }
+
+        /* Estilo para la fila marcada como conseguida */
+        .data-table tr.collected {
+            opacity: 0.6;
+            background-color: #222;
+        }
+        .data-table tr.collected td {
+           text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <aside class="sidebar">
+            <h2>Minecraft Tracker</h2>
+            <a href="#" class="menu-link" data-category="blocks">🧱 Blocks</a>
+            <a href="#" class="menu-link" data-category="mobs">🧟 Mobs</a>
+            <a href="#" class="menu-link" data-category="structures">🏛️ Structures</a>
+
+            <div class="menu-section has-submenu">
+                <button class="menu-button">🧰 Objects</button>
+                <ul class="submenu">
+                    <li><a href="#" class="submenu-link" data-category="comida">🍔 Comida</a></li>
+                    <li><a href="#" class="submenu-link" data-category="herramienta">⛏️ Herramienta</a></li>
+                    <li><a href="#" class="submenu-link" data-category="material">🪵 Material</a></li>
+                    <li><a href="#" class="submenu-link" data-category="arma">⚔️ Arma</a></li>
+                    <li><a href="#" class="submenu-link" data-category="armadura">🛡️ Armadura</a></li>
+                </ul>
+            </div>
+
+            <a href="#" class="menu-link" data-category="enchantments">✨ Enchantments</a>
+            <a href="#" class="menu-link" data-category="effects">🧪 Effects</a>
+            <a href="#" class="menu-link" data-category="achievements">🏆 Achievements</a>
+            <a href="#" class="menu-link" data-category="unique_objects">💎 Unique Objects</a>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="title">
+                <img src="https://minecraft.wiki/images/Recovery_Compass_JE1_BE1.gif?c0c26" alt="Recovery Compass" width="50" height="50">
+                <span>Tracker de Items de Minecraft</span>
+            </h1>
+
+            <div id="content-display">
+                <p>Bienvenido al tracker. Selecciona una categoría en el menú de la izquierda para ver los objetos.</p>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS DE EJEMPLO ---
+        // Aquí puedes agregar todos los items que necesites para cada categoría.
+        const data = {
+            blocks: [
+                { id: 'diamond_block', name: 'Bloque de Diamante', img: 'https://minecraft.wiki/images/Diamond_Block_JE4_BE3.png', description: 'Un bloque decorativo y de almacenamiento hecho de 9 diamantes.' },
+                { id: 'emerald_block', name: 'Bloque de Esmeralda', img: 'https://minecraft.wiki/images/Emerald_Block_JE4_BE3.png', description: 'Un bloque decorativo y de almacenamiento hecho de 9 esmeraldas.' }
+            ],
+            mobs: [
+                 { id: 'creeper', name: 'Creeper', img: 'https://minecraft.wiki/images/Creeper_JE3_BE2.png', description: 'Una criatura hostil que explota cuando se acerca al jugador.' }
+            ],
+            comida: [
+                { id: 'golden_apple', name: 'Manzana Dorada', img: 'https://minecraft.wiki/images/Golden_Apple_JE3_BE3.png', description: 'Otorga Regeneración II y Absorción. Un alimento muy valioso.' },
+                { id: 'cooked_beef', name: 'Filete Cocido', img: 'https://minecraft.wiki/images/Steak_JE4_BE2.png', description: 'Restaura 8 puntos de hambre. Se obtiene cocinando carne cruda.' }
+            ],
+            herramienta: [
+                 { id: 'diamond_pickaxe', name: 'Pico de Diamante', img: 'https://minecraft.wiki/images/Diamond_Pickaxe_JE3_BE3.png', description: 'Una de las herramientas más duraderas y eficientes del juego.' }
+            ],
+            arma: [
+                 { id: 'diamond_sword', name: 'Espada de Diamante', img: 'https://minecraft.wiki/images/Diamond_Sword_JE3_BE3.png', description: 'Un arma poderosa con alto daño y durabilidad.' }
+            ],
+            armadura: [
+                 { id: 'netherite_helmet', name: 'Casco de Netherita', img: 'https://minecraft.wiki/images/Netherite_Helmet_JE2_BE2.png', description: 'La pieza de armadura más resistente, inmune al fuego.' }
+            ],
+            unique_objects: [
+                { id: 'dragon_egg', name: 'Huevo de Dragón', img: 'https://minecraft.wiki/images/Dragon_Egg_JE2_BE2.png', description: 'Un trofeo único que se obtiene al derrotar al Dragón del End por primera vez.' },
+                { id: 'elytra', name: 'Élitros', img: 'https://minecraft.wiki/images/Elytra_JE2_BE2.png', description: 'Un objeto raro que permite al jugador planear. Se encuentra en los barcos de las End Cities.' }
+            ]
+            // ... Puedes añadir más categorías y objetos aquí (structures, enchantments, etc.)
+        };
+
+        // --- LÓGICA DE LA APLICACIÓN ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const contentDisplay = document.getElementById('content-display');
+
+            sidebar.addEventListener('click', function(e) {
+                const target = e.target;
+
+                // Manejar clic en un enlace de categoría (simple o submenú)
+                if (target.matches('.menu-link') || target.matches('.submenu-link')) {
+                    e.preventDefault();
+                    const categoryKey = target.dataset.category;
+                    renderTable(categoryKey);
+                }
+
+                // Manejar clic en un botón con submenú
+                if (target.matches('.menu-button')) {
+                    const parentSection = target.parentElement;
+                    parentSection.classList.toggle('active');
+                }
+            });
+
+            /**
+             * Renderiza una tabla en el área de contenido principal para una categoría dada.
+             * @param {string} categoryKey - La clave de la categoría en el objeto 'data'.
+             */
+            function renderTable(categoryKey) {
+                const items = data[categoryKey];
+                contentDisplay.innerHTML = ''; // Limpiar contenido anterior
+
+                if (!items || items.length === 0) {
+                    contentDisplay.innerHTML = `<p>No hay items en la categoría "${categoryKey}".</p>`;
+                    return;
+                }
+
+                const table = document.createElement('table');
+                table.className = 'data-table';
+                
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Conseguido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                `;
+
+                const tbody = table.querySelector('tbody');
+                const collectedItems = JSON.parse(localStorage.getItem('collected_' + categoryKey) || '[]');
+
+                items.forEach((item, index) => {
+                    const isCollected = collectedItems.includes(item.id);
+                    const row = document.createElement('tr');
+                    if (isCollected) {
+                        row.classList.add('collected');
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><img src="${item.img}" alt="${item.name}"></td>
+                        <td>${item.name}</td>
+                        <td>${item.description}</td>
+                        <td><input type="checkbox" data-id="${item.id}" ${isCollected ? 'checked' : ''}></td>
+                    `;
+                    
+                    // Añadir evento al checkbox
+                    const checkbox = row.querySelector('input[type="checkbox"]');
+                    checkbox.addEventListener('change', function() {
+                        handleCollectionToggle(categoryKey, item.id, row);
+                    });
+
+                    tbody.appendChild(row);
+                });
+
+                contentDisplay.appendChild(table);
+            }
+
+            /**
+             * Maneja el estado de un item (conseguido/no conseguido) y actualiza localStorage.
+             * @param {string} categoryKey - La categoría del item.
+             * @param {string} itemId - El ID del item.
+             * @param {HTMLElement} rowElement - La fila (tr) de la tabla correspondiente.
+             */
+            function handleCollectionToggle(categoryKey, itemId, rowElement) {
+                 const storageKey = 'collected_' + categoryKey;
+                 let collectedItems = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                 
+                 const itemIndex = collectedItems.indexOf(itemId);
+
+                 if (itemIndex > -1) {
+                    // Si ya estaba, quitarlo
+                    collectedItems.splice(itemIndex, 1);
+                    rowElement.classList.remove('collected');
+                 } else {
+                    // Si no estaba, añadirlo
+                    collectedItems.push(itemId);
+                    rowElement.classList.add('collected');
+                 }
+
+                 localStorage.setItem(storageKey, JSON.stringify(collectedItems));
+            }
+        });
+    </script>
 </body>
-</html>
 
+</html>
